@@ -334,7 +334,7 @@ int main(int argc, char *argv[])
     int n = 100000;
     int d = 6;
     double beta = 0.6;
-    string outputPath = "Data/Graphs/grafoBarabasi.csv";
+    string outputPath = "Data/Graphs/firstModel.csv";
 
     // Parsing dei parametri non posizionali
     try
@@ -350,7 +350,7 @@ int main(int argc, char *argv[])
                 cout << "  -n <int>        : Numero di nodi totali (default: 10000)\n";
                 cout << "  -d <int>        : Archi per nuovo nodo (default: 6)\n";
                 cout << "  -beta <double>  : Parametro beta (default: 0.4), se -1 avverrà la generazione secondo il modello classico di BA\n";
-                cout << "  -file <string>  : Percorso file CSV (default: Data/Graphs/grafoBarabasi.csv)\n";
+                cout << "  -file <string>  : Percorso file CSV (default: Data/Graphs/firstModel.csv)\n";
                 cout << "  -h, --help      : Mostra questo messaggio di aiuto\n";
                 return 0;
             }

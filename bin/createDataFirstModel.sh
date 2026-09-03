@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CSV_GRAPH="Data/Graphs/dataGraph.csv"
+CSV_GRAPH="../Data/Graphs/firstModel.csv"
 
 for beta in -1 0.3 0.5 0.7 0.9; do
     echo "--- Avvio simulazioni per beta = $beta ---"

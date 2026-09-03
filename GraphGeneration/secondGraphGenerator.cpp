@@ -307,9 +307,70 @@ void Graph::exportCsv(const string &outputPath)
     outfile.close();
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-    Graph g(2000, 7, 2);
-    g.exportCsv("Data/Graphs/provaSecondo.csv");
+    // Valori di default
+    int n = 2000;
+    int d = 6;
+    double beta = 2;
+    string outputPath = "Data/Graphs/secondModel.csv";
+
+    // Parsing dei parametri non posizionali
+    try
+    {
+        for (int i = 1; i < argc; ++i)
+        {
+            string arg = argv[i];
+
+            if (arg == "-h" || arg == "--help")
+            {
+                cout << "Uso: " << argv[0] << " [OPZIONI]\n\n";
+                cout << "Opzioni disponibili:\n";
+                cout << "  -n <int>        : Numero di round totali (default: 2000)\n";
+                cout << "  -d <int>        : Archi per nuovo nodo (default: 6)\n";
+                cout << "  -beta <double>  : Parametro beta (default: 2)\n";
+                cout << "  -file <string>  : Percorso file CSV (default: Data/Graphs/secondModel.csv)\n";
+                cout << "  -h, --help      : Mostra questo messaggio di aiuto\n";
+                return 0;
+            }
+            else if (arg == "-n" && i + 1 < argc)
+            {
+                n = stoi(argv[++i]);
+            }
+            else if (arg == "-d" && i + 1 < argc)
+            {
+                d = stoi(argv[++i]);
+            }
+            else if (arg == "-beta" && i + 1 < argc)
+            {
+                beta = stod(argv[++i]);
+            }
+            else if (arg == "-file" && i + 1 < argc)
+            {
+                outputPath = argv[++i];
+            }
+            else
+            {
+                cerr << "Opzione o argomento non valido: " << arg << endl;
+                cerr << "Usa '" << argv[0] << " --help' per le opzioni disponibili." << endl;
+                return 1;
+            }
+        }
+    }
+    catch (const exception &e)
+    {
+        cerr << "Errore nella conversione del valore per una delle opzioni: " << e.what() << endl;
+        return 1;
+    }
+
+    cout << "Avvio generazione con parametri:\n"
+         << " - n: " << n << "\n"
+         << " - d: " << d << "\n"
+         << " - beta: " << beta << "\n"
+         << " - Path: " << outputPath << "\n\n";
+
+    Graph g(n, d, beta);
+    g.exportCsv(outputPath);
+
     return 0;
 }

@@ -52,15 +52,16 @@ def saveParameter(dictOfParameter: dict, outputName: str) -> None:
 
 
 
-# if __name__ == "__main__":
-#     csvPath = "Data/Graphs/dataGraph.csv"
+if __name__ == "__main__":
+    # csvPath = "Data/Graphs/dataGraph.csv"
+    csvPath = "Data/Graphs/secondModel.csv"
 
-#     bckPath = "Data/Graphs/allData.csv"
+    bckPath = "Data/Graphs/allDataSecondModel.csv"
 
-#     parser = argparse.ArgumentParser()
-#     parser.add_argument("n", type=int, help="Numero nodi")
-#     parser.add_argument("beta", type=float, help="Parametro beta")
-#     args = parser.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("n", type=int, help="Numero nodi")
+    parser.add_argument("beta", type=float, help="Parametro beta")
+    args = parser.parse_args()
 
 
     graph = createGraphFromCsv(csvPath)
@@ -79,16 +80,4 @@ def saveParameter(dictOfParameter: dict, outputName: str) -> None:
         "diameter" : diamSim,
     }
 
-csvPath = "Data/Graphs/provaSecondo.csv"
-
-graph = createGraphFromCsv(csvPath)
-
-assortativity = computeAssortativity(graph)
-
-diamSim, lccSim, totSim = computeDiameter(graph)
-
-degreeMedianCsv = computeMedianDegree(graph)
-
-print(f"assortativity: {assortativity}")
-print(f"diam: {diamSim}")
-print(f"degreeMedian: {degreeMedianCsv}")
+    saveParameter(dictOfParameter, bckPath)

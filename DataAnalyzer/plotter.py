@@ -65,7 +65,7 @@ def plotCapacityPowerLaw(fileName: str, outputFile: str) -> None:
 
     plt.title(f"CCDF delle Capacità dei Canali ({n:,} canali)".replace(',', '.'))
     plt.xlabel("Capacità C (satoshi)")
-    plt.ylabel("Probabilità $P(Capacità \geq C)$")
+    plt.ylabel("Probabilità $P(Capacità \\geq C)$")
     plt.grid(True, which="both", ls="--", alpha=0.5)
 
     plt.savefig(outputFile, dpi=300, bbox_inches='tight')
@@ -181,17 +181,18 @@ if __name__ == "__main__":
 
 
     if args.type == "powerLaw": 
-        plotDegreePowerLaw(args.fileName, "Data/Plots/degreePowerlaw.png")
-        plotCapacityPowerLaw(args.fileName, "Data/Plots/capacityPowerlaw.png")
+        plotDegreePowerLaw(args.fileName, "Data/Plots/Degree/degreePowerlaw.png")
+        plotCapacityPowerLaw(args.fileName, "Data/Plots/Capacity/capacityPowerlaw.png")
     elif args.type == "degree":
-        plotDegreePowerLaw(args.fileName, "Data/Plots/degreePowerlaw.png")
+        plotDegreePowerLaw(args.fileName, "Data/Plots/Degree/degreePowerlaw.png")
     elif args.type == "capacity":
-        plotCapacityPowerLaw(args.fileName, "Data/Plots/capacityPowerlaw.png")
+        plotCapacityPowerLaw(args.fileName, "Data/Plots/Capacity/capacityPowerlaw.png")
     elif args.type == "graph":
-        plotGraph(args.fileName, "Data/Plots/graphVista.png")
+        plotGraph(args.fileName, "Data/Plots/Graphs/graphVista.png")
     elif args.type == "LN":
-        plotDegreePowerLaw("Data/Network/lightningNetworkEdges.csv", "Data/Plots/realDegreePowerlaw.png")
-        plotCapacityPowerLaw("Data/Network/lightningNetworkEdges.csv", "Data/Plots/realCapacityPowerlaw.png")
+        plotDegreePowerLaw("Data/Network/lightningNetworkEdges.csv", "Data/Plots/Degree/realDegreePowerlaw.png")
+        plotCapacityPowerLaw("Data/Network/lightningNetworkEdges.csv", "Data/Plots/Capacity/realCapacityPowerlaw.png")
     elif args.type == "metrics":
-        plotMetricsEvolution("Data/Graphs/allData.csv", "Data/Plots/Metrics")
+        plotMetricsEvolution("Data/Graphs/allDataFirstModel.csv", "Data/Plots/Metrics/FirstModel")
+        plotMetricsEvolution("Data/Graphs/allDataSecondModel.csv", "Data/Plots/Metrics/SecondModel")
 
