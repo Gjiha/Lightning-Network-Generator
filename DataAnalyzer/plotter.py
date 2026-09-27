@@ -41,7 +41,7 @@ def plotCapacityPowerLaw(fileName: str, outputFile: str) -> None:
 
     # Gestione flessibile del nome colonna ('Capacity' o 'Capacities')
     colName = 'Capacity' if 'Capacity' in df.columns else 'Capacities'
-    
+
     # Estraiamo i valori in un array numpy per ottimizzare l'ordinamento
     capacities = df[colName][df[colName] > 0].values
 
@@ -59,7 +59,7 @@ def plotCapacityPowerLaw(fileName: str, outputFile: str) -> None:
 
     # 3. Creazione del plot
     plt.figure(figsize=(8, 6))
-    
+
     # Usiamo una linea continua invece dei punti sparsi
     plt.loglog(capacities_sorted, ccdf, marker='', linestyle='-', color='darkorange', linewidth=2)
 
@@ -86,14 +86,14 @@ def plotGraph(fileName: str, outputFile: str) -> None:
 
     # Layout Fruchterman-Reingold velocizzato in C
     layout = G.layout_fruchterman_reingold()
-    
+
     # Normalizzazione dimensioni nodi in base al grado
     degrees = G.degree()
     maxDegree = max(degrees) if degrees else 1
     nodeSizes = [5 + (d / maxDegree) * 15 for d in degrees]
 
     fig, ax = plt.subplots(figsize=(10, 10))
-    
+
     ig.plot(
         G,
         target=ax,
@@ -104,14 +104,14 @@ def plotGraph(fileName: str, outputFile: str) -> None:
         edge_width=0.5
     )
 
-    
+
     plt.title("Visualizzazione Rete")
     plt.axis('off')
 
     plt.savefig(outputFile, dpi=300, bbox_inches='tight')
     plt.close()
 
-    return 
+    return
 
 def plotMetricsEvolution(resultsFile: str, outputDir: str) -> None:
     """
@@ -120,55 +120,55 @@ def plotMetricsEvolution(resultsFile: str, outputDir: str) -> None:
     """
     # Carica i dati aggregati salvati da analizeGraph.py
     df = pd.read_csv(resultsFile, sep=";")
-    
+
     # Assicuriamoci che la cartella di output esista
     os.makedirs(outputDir, exist_ok=True)
-    
+
     # Dizionario delle metriche salvate nello script: {nome_colonna: (Titolo, Etichetta Y)}
     metrics = {
         "assortativity": ("Evoluzione dell'Assortatività", "Assortativity Coefficient"),
         "diameter": ("Evoluzione del Diametro", "Diameter"),
         "median degree": ("Evoluzione del Grado Mediano", "Median Degree")
     }
-    
+
     # Ordiniamo per 'n' per garantire che le linee dei grafici siano continue
     df = df.sort_values(by="n")
-    
+
     # Estraiamo i valori unici di beta presenti nel file e li ordiniamo
     betas = sorted(df['beta'].unique())
-    
+
     for metric_col, (title, ylabel) in metrics.items():
         if metric_col not in df.columns:
             print(f"Colonna '{metric_col}' non trovata nel DataFrame. Salto...")
             continue
-            
+
         plt.figure(figsize=(10, 6))
-        
+
         # Plottiamo una linea separata per ogni valore di beta
         for beta in betas:
             subset = df[df['beta'] == beta]
             plt.plot(
-                subset['n'], 
-                subset[metric_col], 
-                marker='o', 
-                markersize=4, 
-                linestyle='-', 
+                subset['n'],
+                subset[metric_col],
+                marker='o',
+                markersize=4,
+                linestyle='-',
                 label=f'$\\beta = {beta}$'
             )
-            
+
         # Formattazione per avvicinarsi allo stile del paper
         plt.title(title)
         plt.xlabel("Number of nodes")
         plt.ylabel(ylabel)
         plt.legend(title="Parametro $\\beta$")
         plt.grid(True, linestyle="--", alpha=0.6)
-        
+
         # Costruiamo il path finale e salviamo la figura
         safe_name = metric_col.replace(' ', '_')
         outputFile = os.path.join(outputDir, f"{safe_name}_evolution.png")
         plt.savefig(outputFile, dpi=300, bbox_inches='tight')
         plt.close()
-        
+
     print(f"I grafici sono stati generati con successo nella cartella: {outputDir}")
     return
 
@@ -180,7 +180,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
 
-    if args.type == "powerLaw": 
+    if args.type == "powerLaw":
         plotDegreePowerLaw(args.fileName, "Data/Plots/Degree/degreePowerlaw.png")
         plotCapacityPowerLaw(args.fileName, "Data/Plots/Capacity/capacityPowerlaw.png")
     elif args.type == "degree":
@@ -195,4 +195,8 @@ if __name__ == "__main__":
     elif args.type == "metrics":
         plotMetricsEvolution("Data/Graphs/allDataFirstModel.csv", "Data/Plots/Metrics/FirstModel")
         plotMetricsEvolution("Data/Graphs/allDataSecondModel.csv", "Data/Plots/Metrics/SecondModel")
+
+        plotMetricsEvolution("Data/Graphs/allDataSecondModelBinomial.csv", "Data/Plots/Metrics/SecondBinomial")
+        plotMetricsEvolution("Data/Graphs/allDataSecondModelPowerLaw.csv", "Data/Plots/Metrics/SecondPowerLaw")
+
 

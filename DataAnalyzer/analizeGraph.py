@@ -37,7 +37,7 @@ def computeDiameter(graph, useLcc: bool = True) -> tuple[int, int, int]:
         return diameter, totalNodes, totalNodes
 
 
-def computeMedianDegree(graph) -> float:    
+def computeMedianDegree(graph) -> float:
     if graph.vcount() == 0:
         return 0.0
 
@@ -54,9 +54,9 @@ def saveParameter(dictOfParameter: dict, outputName: str) -> None:
 
 if __name__ == "__main__":
     # csvPath = "Data/Graphs/dataGraph.csv"
-    csvPath = "Data/Graphs/secondModel.csv"
+    csvPath = "Data/Graphs/secondModelPowerLaw.csv"
 
-    bckPath = "Data/Graphs/allDataSecondModel.csv"
+    bckPath = "Data/Graphs/allDataSecondModelPowerLaw.csv"
 
     parser = argparse.ArgumentParser()
     parser.add_argument("n", type=int, help="Numero nodi")

@@ -31,6 +31,7 @@ private:
     unordered_map<string, long double> dictOfParameters;
 
     mt19937 gen;
+    int capType;
 
     unordered_map<string, long double> getLNParameters(string fileName);
 
@@ -44,7 +45,7 @@ public:
     int numberOfNodes;
     unordered_map<int, int> degreeMap;
 
-    Graph(int n, int d, double beta);
+    Graph(int n, int d, double beta, int capType);
     void addEdge(int source, int target, long capacity);
     void removeEdge(int source, int target);
     void createClique(int m0);
@@ -55,10 +56,12 @@ public:
     void exportCsv(const string &outputpath);
 };
 
-Graph::Graph(int n, int d, double beta) : gen(random_device{}())
+Graph::Graph(int n, int d, double beta, int capType) : gen(random_device{}())
 {
     geometric_distribution<int> newNodeGenerator(0.10);
     uniform_real_distribution<double> eliminateGenerator(0.0, 1.0);
+
+    this->capType = capType;
 
     this->dictOfParameters = this->getLNParameters("Data/Network/parameterNetworks.csv");
 
@@ -220,27 +223,47 @@ void Graph::addEdge(int source, int target, long capacity)
 
 long Graph::generateCapacity()
 {
-    random_device rd;
-    mt19937 gen(rd());
-    uniform_real_distribution<double> unif(0.0, 1.0);
-    lognormal_distribution<double> logNormal(this->dictOfParameters["mu"], this->dictOfParameters["sigma"]);
+    if (this->capType == 0){
 
-    vector<long long> capacities;
+        uniform_real_distribution<double> unif(0.0, 1.0);
+        lognormal_distribution<double> logNormal(this->dictOfParameters["mu"], this->dictOfParameters["sigma"]);
 
-    double p = unif(gen);
-    double cap = 0.0;
+        vector<long long> capacities;
 
-    if (p < this->dictOfParameters["p_tail"])
+        double p = unif(this->gen);
+        double cap = 0.0;
+
+        if (p < this->dictOfParameters["p_tail"])
+        {
+            double uNew = unif(this->gen);
+            cap = this->dictOfParameters["x_min"] * pow(1.0 - uNew, -1.0 / (this->dictOfParameters["alpha"] - 1.0));
+        }
+        else
+        {
+            cap = logNormal(this->gen);
+        }
+
+        return static_cast<long>(round(cap));
+    }
+    else if (this->capType == 1)
     {
-        double uNew = unif(gen);
-        cap = this->dictOfParameters["x_min"] * pow(1.0 - uNew, -1.0 / (this->dictOfParameters["alpha"] - 1.0));
+        double mean = this->dictOfParameters["meanParameter"];
+        double n = this->dictOfParameters["maxParameter"];
+        double p = mean / n;
+        binomial_distribution<long> binom(n, p);
+        return binom(this->gen);
     }
     else
     {
-        cap = logNormal(gen);
-    }
+        uniform_real_distribution<double> unif(0.0, 1.0);
+        double u = unif(this->gen);
 
-    return static_cast<long>(round(cap));
+        double alpha = this->dictOfParameters["alphaPure"];
+        double x_min = this->dictOfParameters["xminPure"];
+
+        double cap = x_min * pow(1.0 - u, -1.0 / (alpha - 1.0));
+        return static_cast<long>(round(cap));
+    }
 }
 
 unordered_map<string, long double> Graph::getLNParameters(string fileName)
@@ -313,6 +336,7 @@ int main(int argc, char *argv[])
     int n = 2000;
     int d = 6;
     double beta = 2;
+    int dist = 0;
     string outputPath = "Data/Graphs/secondModel.csv";
 
     // Parsing dei parametri non posizionali
@@ -330,6 +354,7 @@ int main(int argc, char *argv[])
                 cout << "  -d <int>        : Archi per nuovo nodo (default: 6)\n";
                 cout << "  -beta <double>  : Parametro beta (default: 2)\n";
                 cout << "  -file <string>  : Percorso file CSV (default: Data/Graphs/secondModel.csv)\n";
+                cout << "  -dist <int>     : Distribuzione delle capacità (0: Congiunta, 1: Binomiale, 2: Power-Law)\n";
                 cout << "  -h, --help      : Mostra questo messaggio di aiuto\n";
                 return 0;
             }
@@ -344,6 +369,10 @@ int main(int argc, char *argv[])
             else if (arg == "-beta" && i + 1 < argc)
             {
                 beta = stod(argv[++i]);
+            }
+            else if (arg == "-dist" && i + 1 < argc)
+            {
+                dist = stoi(argv[++i]);
             }
             else if (arg == "-file" && i + 1 < argc)
             {
@@ -367,10 +396,12 @@ int main(int argc, char *argv[])
          << " - n: " << n << "\n"
          << " - d: " << d << "\n"
          << " - beta: " << beta << "\n"
+         << " - dist: " << dist << "\n"
          << " - Path: " << outputPath << "\n\n";
 
-    Graph g(n, d, beta);
+    Graph g(n, d, beta, dist);
     g.exportCsv(outputPath);
 
     return 0;
 }
+
