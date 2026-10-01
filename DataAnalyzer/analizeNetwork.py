@@ -4,6 +4,7 @@ from typing import List, Tuple, Dict
 import pandas as pd
 import numpy as np
 import igraph as ig
+import pprint as pp
 
 
 def generateFile(listEdges: List[List[int]], outputName: str) -> None:
@@ -258,6 +259,8 @@ if __name__ == "__main__":
     dictOfValues["meanParameter"] = meanParameter
     dictOfValues["maxParameter"] = maxParameter
 
-    saveParameter(dictOfValues, parameterPath)
+    # saveParameter(dictOfValues, parameterPath)
+
+    pp.pprint(dictOfValues)
 
 
